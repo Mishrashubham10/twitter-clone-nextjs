@@ -1,7 +1,16 @@
+import Image from '@/components/Image';
+
 const Homepage = () => {
   return (
-    <div className=''>Homepage</div>
-  )
-}
+    <section className="">
+      <Image
+        path="general/post.jpeg"
+        w={600}
+        h={600}
+        alt="test post"
+      />
+    </section>
+  );
+};
 
-export default Homepage
+export default Homepage;
