@@ -10,6 +10,7 @@ type ImageType = {
   alt: string;
   className?: string;
   tr?: boolean;
+  lqip?:{active:boolean, quality: number}|undefined;
 };
 
 const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;

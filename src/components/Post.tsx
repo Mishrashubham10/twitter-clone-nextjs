@@ -2,8 +2,35 @@ import React from 'react';
 import Image from './Image';
 import PostInfo from './PostInfo';
 import PostInteraction from './PostInteraction';
+import { imageKit } from '@/utils';
+import Video from './Video';
 
-export default function Post() {
+interface FileDetailsResponse {
+  width: number;
+  height: number;
+  filePath: string;
+  url: string;
+  fileType: string;
+  lqip?: { active: boolean; quality: number } | undefined;
+  customMetadata?: { sensitive: boolean };
+}
+
+export default async function Post() {
+  const getFileDetails = async (
+    fileId: string
+  ): Promise<FileDetailsResponse> => {
+    return new Promise((resolve, reject) => {
+      imageKit.getFileDetails(fileId, function (error, result) {
+        if (error) reject(error);
+        else resolve(result as FileDetailsResponse);
+      });
+    });
+  };
+
+  const fileDetails = await getFileDetails('67a4972b432c47641649a824');
+
+  console.log(fileDetails);
+
   return (
     <div className="p-4 border-y-[1px] border-borderGray">
       {/* --------- POST TYPE --------- */}
@@ -29,8 +56,27 @@ export default function Post() {
             <PostInfo />
           </div>
           {/* ========= TEXT & MEDIA ========= */}
-          <p className="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia iusto id minima cumque qui nulla blanditiis architecto, magnam, totam quam obcaecati dicta doloribus a, quis optio dolorem praesentium amet laboriosam beatae fuga accusantium cupiditate sit.</p>
-          <Image path="general/post.jpeg" alt="" w={600} h={600} />
+          <p className="">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia iusto
+            id minima cumque qui nulla blanditiis architecto, magnam, totam quam
+            obcaecati dicta doloribus a, quis optio dolorem praesentium amet
+            laboriosam beatae fuga accusantium cupiditate sit.
+          </p>
+          {fileDetails && fileDetails.fileType === 'image' ? (
+            <Image
+              path={fileDetails.filePath}
+              alt=""
+              w={fileDetails.width}
+              h={fileDetails.height}
+              className={fileDetails.customMetadata?.sensitive ? 'blur-lg' : ''}
+              lqip={{ active: true, quality: 20 }}
+            />
+          ) : (
+            <Video
+              path={fileDetails.filePath}
+              className={fileDetails.customMetadata?.sensitive ? 'blur-lg' : ''}
+            />
+          )}
           <PostInteraction />
         </div>
       </section>
